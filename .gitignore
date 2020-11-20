@@ -1,6 +1,4 @@
 /target/
 *.class
-/.idea/
 /src/test/java/Tester.java
 *.swp
-sanjo.iml
