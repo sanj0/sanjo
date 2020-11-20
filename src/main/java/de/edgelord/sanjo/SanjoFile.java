@@ -74,7 +74,7 @@ public class SanjoFile extends File {
      * @param parent the path to the parent dir
      * @param child the path to the file relative to the parent dir
      */
-    public SanjoFile(final String parent, String child) {
+    public SanjoFile(final String parent, final String child) {
         super(parent, child);
     }
 
@@ -86,7 +86,7 @@ public class SanjoFile extends File {
      * @param parent the parent dir
      * @param child the path to the file relative to the parent dir
      */
-    public SanjoFile(final File parent, String child) {
+    public SanjoFile(final File parent, final String child) {
         super(parent, child);
     }
 
