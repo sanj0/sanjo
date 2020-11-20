@@ -53,7 +53,7 @@ public class MetaInf {
      * @param listSuffix the {@link #listSuffix}
      * @param listSeparator the {@link #listSeparator}
      */
-    public MetaInf(int indentionWidth, String listSuffix, String listSeparator) {
+    public MetaInf(final int indentionWidth, final String listSuffix, final String listSeparator) {
         this.indentionWidth = indentionWidth;
         this.listSuffix = listSuffix;
         this.listSeparator = listSeparator;
