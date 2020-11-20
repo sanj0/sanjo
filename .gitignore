@@ -1,4 +1,5 @@
 /target/
+/.idea/sonarlint/
 *.class
 /src/test/java/Tester.java
 *.swp
