@@ -25,8 +25,8 @@ import java.util.*;
  */
 public class SanjoParser {
 
-    public static final String CLASS_PREFIX = ":";
-    public static final String KEY_PREFIX = ".";
+    public static final char CLASS_PREFIX = ':';
+    public static final char KEY_PREFIX = '.';
     public static final String ASSIGNMENT_OPERATOR = "=";
     public static final String DEFAULT_LIST_KEY_SUFFIX = "[]";
     public static final String DEFAULT_LIST_SEPARATOR = ",";
@@ -51,8 +51,11 @@ public class SanjoParser {
         metaInf = new MetaInf(DEFAULT_INDENTION_WIDTH, DEFAULT_LIST_KEY_SUFFIX, DEFAULT_LIST_SEPARATOR);
     }
 
-    public SJClass parse() throws IOException {
-        final List<String> lines = file.readLines();
+    public SanjoParser() {
+        this(null);
+    }
+
+    private void parse0(final List<String> lines) {
         workingClasses.put(0, defaultClass);
         int lineNumber = 1;
         for (final String rawLine : lines) {
@@ -60,13 +63,13 @@ public class SanjoParser {
             int currentIndent = rawLine.length() - line.length();
             int currentIndentLevel = currentIndent / metaInf.indentionWidth + 1;
 
-            if(line.startsWith(CLASS_PREFIX)) {
+            if(line.startsWith(String.valueOf(CLASS_PREFIX))) {
                 // class definition
                 checkIndention(currentIndent, lineNumber);
                 if (currentIndentLevel > lastIndentLevel) {
                     throw indentionError(lineNumber);
                 }
-                final SJClass newClass = new SJClass(line.replaceFirst(CLASS_PREFIX, ""));
+                final SJClass newClass = new SJClass(line.replaceFirst(String.valueOf(CLASS_PREFIX), ""));
                 if (currentIndentLevel == lastIndentLevel) {
                     // case 1: current indent is equal to the last indent -
                     // new class should be a direct subclass of the current class'
@@ -93,11 +96,11 @@ public class SanjoParser {
                 // k-v pairs have to be indented
                 // - allow for empty classes?
                 currentIndentLevel++;
-            } else if (line.startsWith(KEY_PREFIX)) {
+            } else if (line.startsWith(String.valueOf(KEY_PREFIX))) {
                 // key-value pair definition
                 checkIndention(currentIndent, lineNumber);
                 // TODO: check class affiliation by indention-level
-                final SJValue value = createValue(line, lineNumber);
+                final SJValue value = createValue(line);
                 workingClasses.get(currentIndentLevel - 1).getValues().put(value.getKey(), value);
             } else {
                 // everything else is ignored
@@ -107,14 +110,30 @@ public class SanjoParser {
             lineNumber++;
             lastIndentLevel = currentIndentLevel;
         }
+    }
+
+    public SJClass parse() throws IOException {
+        final List<String> lines = file.readLines();
+        parse0(lines);
         return defaultClass;
     }
 
-    private SJValue createValue(final String snippet, final int lineNumber) {
+    public SJClass parse(final String content) {
+        final List<String> lines = Arrays.asList(content.split(System.lineSeparator()));
+        parse0(lines);
+        return defaultClass;
+    }
+
+    public SJClass parse(final List<String> lines) {
+        parse0(lines);
+        return defaultClass;
+    }
+
+    private SJValue createValue(final String snippet) {
         final String[] keyAndValue = snippet.split(ASSIGNMENT_OPERATOR, 2);
         String keyString = keyAndValue[0];
         final String valueString = keyAndValue[1];
-        Object value = null;
+        Object value;
         if (keyString.endsWith(metaInf.listSuffix)) {
             value = new ArrayList<>(Arrays.asList(valueString.split(metaInf.listSeparator)));
             keyString = keyString.substring(0, keyString.length() - metaInf.listSuffix.length());
@@ -122,7 +141,7 @@ public class SanjoParser {
             value = valueString;
         }
 
-        return new SJValue(keyString.replaceFirst(KEY_PREFIX, ""), value);
+        return new SJValue(keyString.replaceFirst(String.valueOf(KEY_PREFIX), ""), value);
     }
 
     private boolean isIndentionLegal(final int indention) {

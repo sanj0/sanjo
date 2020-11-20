@@ -54,6 +54,21 @@ public class SJClass {
         return write(metaInf, startIndention);
     }
 
+    public < T > T get(final SJAddress address) {
+        return (T) address.apply(this);
+    }
+
+    public SJClass getChild(final String name) {
+        for (int i = 0; i < children.size(); i++) {
+            final SJClass classI = children.get(i);
+            if (classI.getName().equals(name)) {
+                return classI;
+            }
+        }
+
+        return new SJClass.Empty();
+    }
+
     public String write(final MetaInf metaInf, final String... startIndention) {
         final StringBuilder builder = new StringBuilder();
         final int indentionWidth = metaInf.getIndentionWidth();
@@ -87,7 +102,7 @@ public class SJClass {
     }
 
     public SJValue getValue(final String key) {
-        return values.get(key);
+        return values.getOrDefault(key, new SJValue.Empty());
     }
 
     public SJClass getParentClass() {
@@ -116,5 +131,26 @@ public class SJClass {
 
     public void setChildren(final List<SJClass> children) {
         this.children = children;
+    }
+
+    public static class Empty extends SJClass {
+        public Empty() {
+            super("", null, MetaInf.DEFAULT_META_INF);
+        }
+
+        @Override
+        public <T> T get(SJAddress address) {
+            return (T) new SJValue.Empty();
+        }
+
+        @Override
+        public SJClass getChild(String name) {
+            return new Empty();
+        }
+
+        @Override
+        public String write(MetaInf metaInf, String... startIndention) {
+            return "";
+        }
     }
 }

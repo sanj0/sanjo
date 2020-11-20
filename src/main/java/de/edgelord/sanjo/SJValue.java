@@ -134,4 +134,10 @@ public class SJValue extends Number {
     public void setValue(final Object value) {
         this.value = value;
     }
+
+    public static class Empty extends SJValue {
+        public Empty() {
+            super("", new Object());
+        }
+    }
 }
