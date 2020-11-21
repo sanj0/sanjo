@@ -20,8 +20,12 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * A utility class to parse
- * a {@link SanjoFile}.
+ * Parses sanjo data (in the form of a {@link String},
+ * a {@link List} of lines or a {@link SanjoFile})
+ * info a tree of {@link SJClass classes} and
+ * {@link SJValue values}.
+ * <p>The format specifications can be found in the
+ * documentation of the {@link SanjoFile} class.
  */
 public class SanjoParser {
 
@@ -99,7 +103,6 @@ public class SanjoParser {
             } else if (line.startsWith(String.valueOf(KEY_PREFIX))) {
                 // key-value pair definition
                 checkIndention(currentIndent, lineNumber);
-                // TODO: check class affiliation by indention-level
                 final SJValue value = createValue(line);
                 workingClasses.get(currentIndentLevel - 1).getValues().put(value.getKey(), value);
             } else {

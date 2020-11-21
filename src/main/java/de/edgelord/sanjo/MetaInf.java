@@ -16,20 +16,52 @@
 
 package de.edgelord.sanjo;
 
+/**
+ * Stores meta information about sanjo file formatting.
+ */
 public class MetaInf {
 
+    /**
+     * The default instance, with
+     * all default values
+     */
     public static final MetaInf DEFAULT_META_INF = new MetaInf();
 
+    /**
+     * The width of the indention
+     */
     protected int indentionWidth;
+
+    /**
+     * The suffix of a key name to
+     * make it recognized as a list
+     * by the {@link SanjoParser}
+     */
     protected String listSuffix;
+
+    /**
+     * The separator between individual
+     * list items to be recognized by
+     * the {@link SanjoParser} as such
+     */
     protected String listSeparator;
 
-    public MetaInf(int indentionWidth, String listSuffix, String listSeparator) {
+    /**
+     * The constructor
+     *
+     * @param indentionWidth the {@link #indentionWidth}
+     * @param listSuffix the {@link #listSuffix}
+     * @param listSeparator the {@link #listSeparator}
+     */
+    public MetaInf(final int indentionWidth, final String listSuffix, final String listSeparator) {
         this.indentionWidth = indentionWidth;
         this.listSuffix = listSuffix;
         this.listSeparator = listSeparator;
     }
 
+    /**
+     * All-default constructor.
+     */
     public MetaInf() {
         this(SanjoParser.DEFAULT_INDENTION_WIDTH, SanjoParser.DEFAULT_LIST_KEY_SUFFIX, SanjoParser.DEFAULT_LIST_SEPARATOR);
     }
