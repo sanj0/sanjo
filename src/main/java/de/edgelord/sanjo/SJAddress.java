@@ -18,6 +18,7 @@ package de.edgelord.sanjo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class SJAddress {
 
@@ -62,16 +63,48 @@ public class SJAddress {
             addressComponents.add(new AddressComponent(builder.toString(), target));
             return new StringBuilder();
         } else {
+            // doesn't really matter as the
+            // string builder is empty anyway
             return builder;
         }
     }
 
+    /**
+     * Creates every subclass so that
+     * this address' target exists with the given
+     * {@link SJClass class} as the entry point.
+     * <p>In case this address points to a
+     * {@link SJValue value}, an {@link SJValue.Empty empty value}
+     * is added in the according (maybe just generated)
+     * {@link SJClass class}.
+     *
+     * @return the target of this address
+     */
+    public Object create(final SJClass root) {
+        return walk(root, (c, ac) -> {
+            if (ac.targetType == Target.CLASS) {
+                if (c.getChild(ac.target) instanceof SJClass.Empty) {
+                    c.getChildren().add(new SJClass(ac.target, c, c.getMetaInf()));
+                }
+            } else if (c.getValue(ac.target) instanceof SJValue.Empty) {
+                c.getValues().put(ac.target, new SJValue(ac.target, ""));
+            }
+        });
+    }
+
+    //TODO: rename (to "find"?)
     public Object apply(final SJClass root) {
+        return walk(root, (c, ac) -> {});
+    }
+
+    private Object walk(final SJClass root, final BiConsumer<SJClass, AddressComponent> preVisitAction) {
         SJClass targetClass = root;
         for (final AddressComponent addressComponent : addressComponents) {
             if (addressComponent.targetType == Target.CLASS) {
+                preVisitAction.accept(targetClass, addressComponent);
                 targetClass = targetClass.getChild(addressComponent.target);
             } else {
+                preVisitAction.accept(targetClass, addressComponent);
                 return targetClass.getValue(addressComponent.target);
             }
         }
@@ -93,7 +126,7 @@ public class SJAddress {
             this.targetType = targetType;
         }
 
-        public Object getTarget() {
+        public String getTarget() {
             return target;
         }
 
