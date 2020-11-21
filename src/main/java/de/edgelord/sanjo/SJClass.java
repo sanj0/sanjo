@@ -133,6 +133,10 @@ public class SJClass {
         this.children = children;
     }
 
+    public MetaInf getMetaInf() {
+        return metaInf;
+    }
+
     public static class Empty extends SJClass {
         public Empty() {
             super("", null, MetaInf.DEFAULT_META_INF);
