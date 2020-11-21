@@ -39,7 +39,7 @@ public class SJValue extends Number {
             builder.append(SanjoParser.ASSIGNMENT_OPERATOR);
             final List list = (List) value;
             for (final Object o : list) {
-                builder.append(o.toString() + separator);
+                builder.append(o.toString()).append(separator);
             }
             builder.delete(builder.length() - separator.length(), builder.length());
         } else {
