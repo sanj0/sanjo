@@ -19,6 +19,29 @@ package de.edgelord.sanjo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An address of a specified format
+ * pointing to either a {@link SJClass class}
+ * or a {@link SJValue value} in the tree model
+ * of {@link SanjoParser parsed} sanjo data.
+ * <p>The address-format works as follows:
+ * <br>{@code :class:subclass.value}<br>
+ * The address is therefore simply a string
+ * retrieved by concatenating the "path" of
+ * all classes (with their syntactic prefix)
+ * (and the value if the address points to one, also
+ * with its corresponding prefix).
+ * <p>An example:
+ * <pre>
+ * :data
+ *     :save0
+ *         .name=Jonas
+ * </pre>
+ * In the above sanjo data, the address for
+ * the value "name" (currently holding the value "Jonas")
+ * would be
+ * <br>{@code :data:save0.name}<br>
+ */
 public class SJAddress {
 
     private final String address;
