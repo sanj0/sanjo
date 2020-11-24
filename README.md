@@ -20,6 +20,8 @@ Class-affiliation is based on indention; every class and key-value pair with zer
 
 ### The sanjo java library
 
+The library is built using maven, adding it as a dependency is thus as simple as adding the following snippet to your project's pom.xml file:
+
 ```xml
 <dependencies>
     <dependency>
@@ -28,6 +30,29 @@ Class-affiliation is based on indention; every class and key-value pair with zer
         <version>0.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
+```
+
+#### Usage examples
+
+```java
+import de.edgelord.sanjo.*;
+
+
+public static void main(String[] args) {
+    // parsing a sanjo dom from a list of sanjo "lines"
+    final Parser listParser = new Parser();
+    final SJClass listDataRoot.parse(Arrays.asList(".key=value"));
+
+    // parsing a sanjo file
+    final SanjoFile file = new SanjoFile("/path/to/file.sj");
+    final Parser fileParser = file.parser();
+    final SJClass fileDataRoot = fileParser.parse();
+
+    // the SJClass return by Parser#parse(*)
+    // is the data's "default" class, therefore 
+    // every key-value pair and every defined class
+    // is a direct of indirect child of the return "dataRoot"
+}
 ```
 
 
