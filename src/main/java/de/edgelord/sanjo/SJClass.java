@@ -25,6 +25,7 @@ import java.util.Map;
  * A class in a {@link SanjoFile}
  * that holds a map of {@link SJValue values}.
  */
+//TODO: list of parents instead of a single one?
 public class SJClass {
 
     public static final String DEFAULT = "default";
@@ -67,6 +68,33 @@ public class SJClass {
         }
 
         return new SJClass.Empty();
+    }
+
+    public SJValue addValue(final SJValue val) {
+        values.put(val.getKey(), val);
+        return val;
+    }
+
+    public SJValue addValue(final String key, final Object value) {
+        return addValue(new SJValue(key, value));
+    }
+
+    public SJValue addValue(final String key) {
+        return addValue(new SJValue(key, ""));
+    }
+
+    public SJClass addChild(final String name) {
+        final SJClass child = new SJClass(name, this, metaInf);
+        children.add(child);
+
+        return child;
+    }
+
+    public SJClass addChild(final SJClass clazz) {
+        clazz.parentClass = this;
+        children.add(clazz);
+
+        return clazz;
     }
 
     public String write(final MetaInf metaInf, final String... startIndention) {
