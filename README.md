@@ -24,19 +24,18 @@ The library is built using maven, adding it as a dependency is thus as simple as
 
 ```xml
 <dependencies>
-    <dependency>
-        <groupId>de.edgelord</groupId>
-        <artifactId>sanjo</artifactId>
-        <version>0.1-SNAPSHOT</version>
-    </dependency>
-</dependencies>
+        <dependency>
+            <groupId>de.edgelord</groupId>
+            <artifactId>sanjo</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 ```
 
-#### Usage examples
+#### Reading examples
 
 ```java
 import de.edgelord.sanjo.*;
-
 
 public static void main(String[] args) {
     // parsing a sanjo dom from a list of sanjo "lines"
@@ -52,6 +51,36 @@ public static void main(String[] args) {
     // is the data's "default" class, therefore 
     // every key-value pair and every defined class
     // is a direct of indirect child of the return "dataRoot"
+    // said class can for example be used as follows:
+    final SJValue value1 = listDataRoot.getValue("key");
+    System.out.println(value1.string() + " is the value of key \"key\""");
+    final int num = fileDataRoot.getChild("subclass").getValue("num")
+        .intValue(); // SJValue extends class Number, therefore
+                     // longValue(), doubleValue() and floatValue()
+                     // are also available
+    final SJValue value2 = SJAddress.forString(":subclass:subclass2.key")
+        .apply(fileDataRoot);
+    final SJClass subclass2 = SJAddress.forString(":subclass:subclass2")
+        .apply(fileDataRoot);
+}
+```
+
+#### Writing examples
+
+```java
+import de.edgelord.sanjo.*;
+
+public static void main(String[] args) {
+    final SJClass generated = new SJClass("generated");
+    generated.addValue("key", "value");
+    generated.addChild("subclass").addValue("key", "value");
+    System.out.println(generated.write());
+    // output:
+    /*
+    *.key=value
+    *:subclass
+    *.key=value
+    */
 }
 ```
 
