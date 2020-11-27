@@ -46,7 +46,7 @@ public class SanjoParser {
 
     private final SanjoFile file;
     private final MetaInf metaInf;
-    private int lastIndentLevel = 0;
+    private int lastIndentLevel = 1;
     private SJClass defaultClass = SJClass.defaultClass();
     private Map<Integer, SJClass> workingClasses = new HashMap<>();
 
