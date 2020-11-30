@@ -24,12 +24,12 @@ The library is built using maven, adding it as a dependency is thus as simple as
 
 ```xml
 <dependencies>
-        <dependency>
-            <groupId>de.edgelord</groupId>
-            <artifactId>sanjo</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    <dependency>
+        <groupId>de.edgelord</groupId>
+        <artifactId>sanjo</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 ```
 
 #### Reading examples
@@ -79,7 +79,7 @@ public static void main(String[] args) {
     /*
     *.key=value
     *:subclass
-    *.key=value
+    *    .key=value
     */
 }
 ```
