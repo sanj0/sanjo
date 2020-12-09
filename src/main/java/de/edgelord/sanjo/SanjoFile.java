@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,6 +57,10 @@ import java.util.List;
  */
 public class SanjoFile extends File {
 
+    /**File extension without the dot*/
+    public static final String SJ_EXTENION = "sj";
+    /**File xetension with the dot*/
+    public static final String FILE_EXTENSION = ".sj";
     /**
      * Instantiates the file using the
      * {@link File#File(String)} constructor.
@@ -120,6 +125,6 @@ public class SanjoFile extends File {
      * @throws IOException when something goes wrong reading the file
      */
     public List<String> readLines() throws IOException {
-        return Files.readAllLines(toPath());
+        return exists() ? Files.readAllLines(toPath()) : new ArrayList<>();
     }
 }
