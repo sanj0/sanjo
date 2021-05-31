@@ -8,6 +8,7 @@ This repository also contains a java library for reading and writing sanjo data.
 ```bash
 :class
     .key=value
+    .list[]=1,2,3,4
     :subclass
         .key=value
     .key=value
