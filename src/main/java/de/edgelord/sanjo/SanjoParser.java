@@ -67,6 +67,7 @@ public class SanjoParser {
         int lineNumber = 1;
         for (final String rawLine : lines) {
             String line = removeLeadingSpaces(rawLine);
+            if (line.isEmpty()) continue;
             int currentIndent = rawLine.length() - line.length();
             int currentIndentLevel = currentIndent / metaInf.indentionWidth + 1;
 
