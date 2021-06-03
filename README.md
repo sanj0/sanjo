@@ -8,6 +8,7 @@ This repository also contains a java library for reading and writing sanjo data.
 ```bash
 :class
     .key=value
+    .list[]=1,2,3,4
     :subclass
         .key=value
     .key=value
@@ -16,7 +17,8 @@ This repository also contains a java library for reading and writing sanjo data.
             .key=value
 ```
 
-Class-affiliation is based on indention; every class and key-value pair with zero indention is a direct child of the `default` class. 
+Class-affiliation is based on indention; every class and key-value pair with zero indention is a direct child of the `default` class.
+As of version 0.2, classes start with either : or >, values start with either . or ? and assignemts are either = or :
 
 ### The sanjo java library
 
