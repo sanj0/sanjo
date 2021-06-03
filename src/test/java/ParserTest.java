@@ -37,17 +37,18 @@ public class ParserTest {
         testContent = new ArrayList<>();
 
         testContent.add(".key=value");
-        testContent.add(".1=2");
-        testContent.add(".eminem=Marshall Mathers");
+        testContent.add("?1=2");
+        testContent.add("?eminem:Marshall Mathers");
         testContent.add(":empty_class");
-        testContent.add(".me=Malte Dostal");
-        testContent.add(":empty-class2");
-        testContent.add(":class");
+        testContent.add("?me=Malte Dostal");
+        testContent.add(">empty-class2");
+        testContent.add(">class");
         testContent.add("    .subvalue=here");
-        testContent.add("    .something=nothing");
+        testContent.add("    ?something=nothing");
+        testContent.add("    ?array[]:1,2,3,4,6,5");
         testContent.add("    :subclass");
-        testContent.add("        .subsubvalue=Hello There");
-        testContent.add(".something=meh");
+        testContent.add("        ?subsubvalue=Hello There");
+        testContent.add(".something:meh");
     }
 
     @Test
@@ -55,12 +56,13 @@ public class ParserTest {
     public void testRead() {
         final SanjoParser parser = new SanjoParser();
         final SJClass root = parser.parse(testContent);
-        assertEquals("value", root.getValue("key").getValue());
-        assertEquals("2", root.getValue("1").getValue());
-        assertEquals("Marshall Mathers", root.getValue("eminem").getValue());
-        assertEquals("Malte Dostal", root.getValue("me").getValue());
-        assertEquals("meh", root.getValue("something").getValue());
+        assertEquals("value", root.getValue("key").get().getValue());
+        assertEquals("2", root.getValue("1").get().getValue());
+        assertEquals("Marshall Mathers", root.getValue("eminem").get().getValue());
+        assertEquals("Malte Dostal", root.getValue("me").get().getValue());
+        assertEquals("meh", root.getValue("something").get().getValue());
+        assertEquals("6", ((SJValue) root.get(SJAddress.forString(":class.array")).get()).getList().get(4));
 
-        assertEquals("Hello There", ((SJValue) root.get(SJAddress.forString(":class:subclass.subsubvalue"))).getValue());
+        assertEquals("Hello There", ((SJValue) root.get(SJAddress.forString(":class:subclass.subsubvalue")).get()).getValue());
     }
 }

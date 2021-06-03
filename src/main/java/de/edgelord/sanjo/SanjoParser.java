@@ -30,8 +30,11 @@ import java.util.*;
 public class SanjoParser {
 
     public static final char CLASS_PREFIX = ':';
+    public static final char CLASS_PREFIX_GT = '>';
     public static final char KEY_PREFIX = '.';
+    public static final char KEY_PREFIX_QM = '?';
     public static final String ASSIGNMENT_OPERATOR = "=";
+    public static final String ASSIGNMENT_OPERATOR_COL = ":";
     public static final String DEFAULT_LIST_KEY_SUFFIX = "[]";
     public static final String DEFAULT_LIST_SEPARATOR = ",";
     public static final int DEFAULT_INDENTION_WIDTH = 4;
@@ -47,8 +50,8 @@ public class SanjoParser {
     private final SanjoFile file;
     private final MetaInf metaInf;
     private int lastIndentLevel = 1;
-    private SJClass defaultClass = SJClass.defaultClass();
-    private Map<Integer, SJClass> workingClasses = new HashMap<>();
+    private final SJClass defaultClass = SJClass.defaultClass();
+    private final Map<Integer, SJClass> workingClasses = new HashMap<>();
 
     public SanjoParser(final SanjoFile file) {
         this.file = file;
@@ -67,13 +70,13 @@ public class SanjoParser {
             int currentIndent = rawLine.length() - line.length();
             int currentIndentLevel = currentIndent / metaInf.indentionWidth + 1;
 
-            if(line.startsWith(String.valueOf(CLASS_PREFIX))) {
+            if(line.charAt(0) == CLASS_PREFIX || line.charAt(0) == CLASS_PREFIX_GT) {
                 // class definition
                 checkIndention(currentIndent, lineNumber);
                 if (currentIndentLevel > lastIndentLevel) {
                     throw indentionError(lineNumber);
                 }
-                final SJClass newClass = new SJClass(line.replaceFirst(String.valueOf(CLASS_PREFIX), ""));
+                final SJClass newClass = new SJClass(line.substring(1));
                 if (currentIndentLevel == lastIndentLevel) {
                     // case 1: current indent is equal to the last indent -
                     // new class should be a direct subclass of the current class'
@@ -86,7 +89,6 @@ public class SanjoParser {
                     // case 2: current indent is smaller than the last indent
                     // new class should be a subclass of some parent of some parent
                     // of the current class, depending on the indention delta
-                    final int delta = lastIndentLevel - currentIndentLevel;
                     SJClass parent = workingClasses.get(currentIndentLevel - 1);
                     parent.getChildren().add(newClass);
                     newClass.parentClass = parent;
@@ -100,7 +102,7 @@ public class SanjoParser {
                 // k-v pairs have to be indented
                 // - allow for empty classes?
                 currentIndentLevel++;
-            } else if (line.startsWith(String.valueOf(KEY_PREFIX))) {
+            } else if (line.charAt(0) == KEY_PREFIX || line.charAt(0) == KEY_PREFIX_QM) {
                 // key-value pair definition
                 checkIndention(currentIndent, lineNumber);
                 final SJValue value = createValue(line);
@@ -133,9 +135,15 @@ public class SanjoParser {
     }
 
     private SJValue createValue(final String snippet) {
-        final String[] keyAndValue = snippet.split(ASSIGNMENT_OPERATOR, 2);
-        String keyString = keyAndValue[0];
-        final String valueString = keyAndValue[1];
+        final int eqIndex = snippet.indexOf(ASSIGNMENT_OPERATOR);
+        final int colIndex = snippet.indexOf(ASSIGNMENT_OPERATOR_COL);
+        int assignmentCharIndex;
+        if (eqIndex == -1) assignmentCharIndex = colIndex;
+        else if (colIndex == -1) assignmentCharIndex = eqIndex;
+        else assignmentCharIndex = Math.min(eqIndex, colIndex);
+
+        String keyString = snippet.substring(0, assignmentCharIndex);
+        final String valueString = snippet.substring(assignmentCharIndex + 1);
         Object value;
         if (keyString.endsWith(metaInf.listSuffix)) {
             value = new ArrayList<>(Arrays.asList(valueString.split(metaInf.listSeparator)));

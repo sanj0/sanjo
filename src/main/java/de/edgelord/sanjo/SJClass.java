@@ -16,16 +16,12 @@
 
 package de.edgelord.sanjo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A class in a {@link SanjoFile}
  * that holds a map of {@link SJValue values}.
  */
-//TODO: list of parents instead of a single one?
 public class SJClass {
 
     public static final String DEFAULT = "default";
@@ -55,19 +51,18 @@ public class SJClass {
         return write(metaInf, startIndention);
     }
 
-    public < T > T get(final SJAddress address) {
-        return (T) address.apply(this);
+    public < T > Optional<T> get(final SJAddress address) {
+        return (Optional<T>) address.find(this);
     }
 
-    public SJClass getChild(final String name) {
+    public Optional<SJClass> getChild(final String name) {
         for (int i = 0; i < children.size(); i++) {
             final SJClass classI = children.get(i);
             if (classI.getName().equals(name)) {
-                return classI;
+                return Optional.of(classI);
             }
         }
-
-        return new SJClass.Empty();
+        return Optional.empty();
     }
 
     public SJValue addValue(final SJValue val) {
@@ -129,8 +124,8 @@ public class SJClass {
         return new SJClass(DEFAULT);
     }
 
-    public SJValue getValue(final String key) {
-        return values.getOrDefault(key, new SJValue.Empty());
+    public Optional<SJValue> getValue(final String key) {
+        return Optional.ofNullable(values.get(key));
     }
 
     public SJClass getParentClass() {
@@ -163,26 +158,5 @@ public class SJClass {
 
     public MetaInf getMetaInf() {
         return metaInf;
-    }
-
-    public static class Empty extends SJClass {
-        public Empty() {
-            super("", null, MetaInf.DEFAULT_META_INF);
-        }
-
-        @Override
-        public <T> T get(SJAddress address) {
-            return (T) new SJValue.Empty();
-        }
-
-        @Override
-        public SJClass getChild(String name) {
-            return new Empty();
-        }
-
-        @Override
-        public String write(MetaInf metaInf, String... startIndention) {
-            return "";
-        }
     }
 }

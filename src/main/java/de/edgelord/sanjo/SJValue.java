@@ -22,7 +22,7 @@ import java.util.List;
 public class SJValue extends Number {
 
     private String key;
-    private Object value;
+    private transient Object value;
 
     public SJValue(final String key, final Object value) {
         this.key = key;
@@ -37,7 +37,7 @@ public class SJValue extends Number {
             final String separator = metaInf.getListSeparator();
             builder.append(metaInf.getListSuffix());
             builder.append(SanjoParser.ASSIGNMENT_OPERATOR);
-            final List list = (List) value;
+            final List<?> list = (List<?>) value;
             for (final Object o : list) {
                 builder.append(o.toString()).append(separator);
             }
@@ -62,7 +62,7 @@ public class SJValue extends Number {
         final List<T> list = new ArrayList<>();
 
         for (final String s : stringList) {
-            T entry = null;
+            T entry;
             try {
                 entry = (T) s;
             } catch (final Exception ex) {
@@ -133,11 +133,5 @@ public class SJValue extends Number {
 
     public void setValue(final Object value) {
         this.value = value;
-    }
-
-    public static class Empty extends SJValue {
-        public Empty() {
-            super("", new Object());
-        }
     }
 }

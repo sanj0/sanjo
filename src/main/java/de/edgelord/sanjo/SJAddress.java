@@ -18,6 +18,7 @@ package de.edgelord.sanjo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -68,14 +69,19 @@ public class SJAddress {
         Target currentTarget = null;
 
         for (final char c : addressChars) {
-            if (c == SanjoParser.CLASS_PREFIX) {
-                currentData = addAddressComponent(currentData, currentTarget);
-                currentTarget = Target.CLASS;
-            } else if (c == SanjoParser.KEY_PREFIX) {
-                currentData = addAddressComponent(currentData, currentTarget);
-                currentTarget = Target.VALUE;
-            } else {
-                currentData.append(c);
+            switch (c) {
+                case SanjoParser.CLASS_PREFIX:
+                case SanjoParser.CLASS_PREFIX_GT:
+                    currentData = addAddressComponent(currentData, currentTarget);
+                    currentTarget = Target.CLASS;
+                    break;
+                case SanjoParser.KEY_PREFIX:
+                case SanjoParser.KEY_PREFIX_QM:
+                    currentData = addAddressComponent(currentData, currentTarget);
+                    currentTarget = Target.VALUE;
+                    break;
+                default:
+                    currentData.append(c);
             }
         }
         addAddressComponent(currentData, currentTarget);
@@ -97,7 +103,7 @@ public class SJAddress {
      * this address' target exists with the given
      * {@link SJClass class} as the entry point.
      * <p>In case this address points to a
-     * {@link SJValue value}, an {@link SJValue.Empty empty value}
+     * {@link SJValue value}, an empty value
      * is added in the according (maybe just generated)
      * {@link SJClass class}.
      *
@@ -106,33 +112,32 @@ public class SJAddress {
     public Object create(final SJClass root) {
         return walk(root, (c, ac) -> {
             if (ac.targetType == Target.CLASS) {
-                if (c.getChild(ac.target) instanceof SJClass.Empty) {
+                if (!c.getChild(ac.target).isPresent()) {
                     c.getChildren().add(new SJClass(ac.target, c, c.getMetaInf()));
                 }
-            } else if (c.getValue(ac.target) instanceof SJValue.Empty) {
+            } else if (!c.getValue(ac.target).isPresent()) {
                 c.getValues().put(ac.target, new SJValue(ac.target, ""));
             }
         });
     }
 
-    //TODO: rename (to "find"?)
-    public Object apply(final SJClass root) {
-        return walk(root, (c, ac) -> {});
+    public Optional<Object> find(final SJClass root) {
+        return (Optional<Object>) walk(root, (c, ac) -> {});
     }
 
-    private Object walk(final SJClass root, final BiConsumer<SJClass, AddressComponent> preVisitAction) {
+    private Optional<?> walk(final SJClass root, final BiConsumer<SJClass, AddressComponent> preVisitAction) {
         SJClass targetClass = root;
         for (final AddressComponent addressComponent : addressComponents) {
             if (addressComponent.targetType == Target.CLASS) {
                 preVisitAction.accept(targetClass, addressComponent);
-                targetClass = targetClass.getChild(addressComponent.target);
+                targetClass = targetClass.getChild(addressComponent.target).orElse(new SJClass(""));
             } else {
                 preVisitAction.accept(targetClass, addressComponent);
                 return targetClass.getValue(addressComponent.target);
             }
         }
 
-        return targetClass;
+        return targetClass.getName().isEmpty() ? Optional.empty() : Optional.of(targetClass);
     }
 
     public enum Target {

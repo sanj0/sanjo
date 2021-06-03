@@ -127,4 +127,19 @@ public class SanjoFile extends File {
     public List<String> readLines() throws IOException {
         return exists() ? Files.readAllLines(toPath()) : new ArrayList<>();
     }
+
+    /**
+     * Reads all lines from the given file
+     * and returns them as an ArrayList or
+     * returns an empty ArrayList if the file
+     * doesn't exist.
+     *
+     * @param f a file
+     * @return all lines form the given file as an ArrayList or an empty one
+     * in case the file doesn't exist
+     * @throws IOException if something goes wrong
+     */
+    public static List<String> readLines(final File f) throws IOException {
+        return f.exists() ? Files.readAllLines(f.toPath()) : new ArrayList<>();
+    }
 }
