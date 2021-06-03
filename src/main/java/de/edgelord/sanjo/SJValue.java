@@ -29,6 +29,10 @@ public class SJValue extends Number {
         this.value = value;
     }
 
+    public static SJValue forValue(final Object value) {
+        return new SJValue("", value);
+    }
+
     public String write(final MetaInf metaInf) {
         final StringBuilder builder = new StringBuilder();
         builder.append(SanjoParser.KEY_PREFIX).append(getKey());
