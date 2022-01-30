@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-import de.edgelord.sanjo.SJAddress;
-import de.edgelord.sanjo.SJClass;
-import de.edgelord.sanjo.SJValue;
-import de.edgelord.sanjo.SanjoParser;
+import de.sanj0.sanjo.SJAddress;
+import de.sanj0.sanjo.SJClass;
+import de.sanj0.sanjo.SJValue;
+import de.sanj0.sanjo.SanjoParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
