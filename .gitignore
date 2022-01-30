@@ -3,3 +3,4 @@
 *.class
 /src/test/java/Tester.java
 *.swp
+.DS_STORAGE
